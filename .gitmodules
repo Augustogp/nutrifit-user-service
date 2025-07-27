@@ -1,0 +1,3 @@
+[submodule "nutrifit-protos"]
+	path = nutrifit-protos
+	url = https://github.com/Augustogp/nutrifit-protos.git

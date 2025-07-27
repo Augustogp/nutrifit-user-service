@@ -1,0 +1,10 @@
+spring:
+  flyway:
+    enabled: false
+grpc:
+  server:
+    port: 9001
+
+logging:
+  level:
+    org.springframework.grpc: DEBUG
