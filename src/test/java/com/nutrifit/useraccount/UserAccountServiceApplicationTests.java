@@ -10,11 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.MySQLContainer;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Transactional
 @Sql(scripts = "/testdata/create_schema_and_insert_user_accounts.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class UserAccountServiceApplicationTests {

@@ -13,14 +13,14 @@
 	</parent>
 
 	<groupId>com.example</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>nutrifit-user-account-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
-	<description>Demo project for Spring Boot with gRPC</description>
+	<name>nutrifit-user-account-service</name>
+	<description>User Account Service for NutriFit</description>
 
 	<properties>
 		<java.version>21</java.version>
-		<grpc.version>1.63.0</grpc.version>
+		<grpc.version>1.58.0</grpc.version>
 		<protobuf.version>3.25.1</protobuf.version>
 		<grpc-spring-boot.version>2.15.0.RELEASE</grpc-spring-boot.version>
 		<os-maven-plugin.version>1.7.0</os-maven-plugin.version>
@@ -133,6 +133,12 @@
 			<version>5.4.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.12.0</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.annotation</groupId>
@@ -145,14 +151,27 @@
 
 	<build>
 		<plugins>
+			<!-- Automatically detects OS and sets os.detected.classifier -->
+			<plugin>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.7.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>detect</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>
 				<artifactId>protobuf-maven-plugin</artifactId>
 				<version>0.6.1</version>
 				<configuration>
-					<protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:windows-x86_64</protocArtifact>
+					<protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
 					<pluginId>grpc-java</pluginId>
-					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:windows-x86_64</pluginArtifact>
+					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
 					<protoSourceRoot>${project.basedir}/nutrifit-protos/src</protoSourceRoot>
 				</configuration>
 				<executions>
