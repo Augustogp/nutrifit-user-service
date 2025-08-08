@@ -13,7 +13,7 @@ services:
         - 'mysql_data:/var/lib/mysql'
         - './docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql'
     networks:
-      - nutrifit_network
+      - nutrifit-network
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
@@ -25,22 +25,26 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: nutrifit-user-account-service:latest
-    container_name: nutrifit_user_account_service
+    image: user-account-service:latest
+    container_name: user_account_service
     ports:
       - '4000:4000'
       - '9000:9000'
     depends_on:
-      - mysql-user-service
+      mysql-user-service:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-user-service:3306/user_service
       SPRING_DATASOURCE_USERNAME: nutrifituser
       SPRING_DATASOURCE_PASSWORD: nutripass
       SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SERVER_PORT: 4000
+      GRPC_PORT: 9000
     networks:
-        - nutrifit_network
+        - nutrifit-network
 volumes:
   mysql_data:
 networks:
-  nutrifit_network:
-    driver: bridge
+  nutrifit-network:
+    external: true
