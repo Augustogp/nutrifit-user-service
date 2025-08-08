@@ -1,5 +1,7 @@
 package com.nutrifit.useraccount.exception;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -48,5 +50,37 @@ public class GlobalExceptionHandler {
                 e.getMessage()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        Throwable rootCause = ex.getCause();
+
+        String message = "A data integrity violation occurred.";
+        String errorCode = "DATA_INTEGRITY_ERROR";
+
+        if (rootCause instanceof ConstraintViolationException constraintEx) {
+            String constraintName = constraintEx.getConstraintName();
+
+            if (constraintName != null) {
+                if (constraintName.contains("user_account.username")) {
+                    message = "Username already exists.";
+                    errorCode = "USERNAME_EXISTS";
+                } else if (constraintName.contains("user_account.email")) {
+                    message = "Email already exists.";
+                    errorCode = "EMAIL_EXISTS";
+                } else {
+                    message = "Constraint violation: " + constraintName;
+                }
+            }
+        }
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                message,
+                errorCode,
+                ex.getMostSpecificCause().getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 }
